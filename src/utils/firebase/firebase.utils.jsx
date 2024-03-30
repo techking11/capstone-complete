@@ -1,11 +1,16 @@
 import { initializeApp } from "firebase/app";
 
 import {
-    getAuth,
-    signInWithRedirect,
-    signInWithPopup,
-    GoogleAuthProvider
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider
 } from "firebase/auth";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDrOrlA-VfssPCCeFLNWfM6fo2XYJVpoRQ",
@@ -21,9 +26,18 @@ const firebaseApp = initializeApp(firebaseConfig);
 const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({
-    prompt: "select_account",
+  prompt: "select_account",
 });
 
-export const auth = getAuth();
+export const auth = getAuth(firebaseApp);
 
 export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+
+export const db = getFirestore();
+
+export const createCustomUserFromAuth = async (userAuth) => {
+  const userDocRef = doc(db, "users", userAuth.uid);
+  const userSnapshot = await getDoc(userDocRef);
+  console.log(userSnapshot);
+  console.log(userSnapshot.exists());
+};
