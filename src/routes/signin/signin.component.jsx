@@ -3,7 +3,8 @@ import { createCustomUserFromAuth, signInWithGooglePopup } from "../../utils/fir
 const SignIn = () => {
     const logGoogleUser = async () => {
         const { user } = await signInWithGooglePopup();
-        createCustomUserFromAuth(user);
+        const userDocRef = await createCustomUserFromAuth(user);
+        console.log(userDocRef);
     }
 
     return (
