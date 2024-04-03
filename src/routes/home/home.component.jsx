@@ -1,9 +1,9 @@
 import Directory from "../../components/directory/directory.component";
-import categories from "../../services/data";
+import Categories from "../../services/categories.service";
 
 const Home = () => {
     return <div>
-        <Directory categories={categories} />;
+        <Directory categories={Categories} />;
     </div>
 };
 

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
     createCustomUserFromAuth,
     signInWithGooglePopup,
@@ -8,7 +8,7 @@ import FormInput from "../form-input/form-input.component";
 
 import "./signin.styles.scss";
 import Button from "../button/button.component";
-import { UserContext } from "../../context/user.context";
+import toast from "react-hot-toast";
 
 const fields = {
     email: "",
@@ -29,30 +29,28 @@ const SignIn = () => {
     const logGoogleUser = async () => {
         try {
             const { user } = await signInWithGooglePopup();
-            const userDocRef = await createCustomUserFromAuth(user);
-            console.log(userDocRef);
+            await createCustomUserFromAuth(user);
         } catch (error) {
-            console.log(error.message);
+            toast.error(error.message);
         }
     }
 
     const resetFormFields = () => setFormFields(fields);
-    const { setCurrentUser } = useContext(UserContext);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const { user } = await signinUserWithGoogleEmailandPassword(email, password);
-            setCurrentUser(user);
+            await signinUserWithGoogleEmailandPassword(email, password);
             resetFormFields();
+            toast.success('Successfully signed in !');
         } catch (error) {
             switch (error.code) {
-                case "auth/wrong-password":
-                    alert("Password wrong");
+                case "auth/invalid-credential":
+                    toast.error('Check your credentials !');
                     break;
                 default:
-                    console.log("Error: " + error.message);
+                    toast.error("Error: " + error.message + " !");
                     break;
             }
         }

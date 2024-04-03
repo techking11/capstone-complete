@@ -5,7 +5,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from "firebase/auth";
 
 import {
@@ -14,7 +16,7 @@ import {
   getDoc,
   setDoc
 } from "firebase/firestore";
-
+import toast from "react-hot-toast";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDrOrlA-VfssPCCeFLNWfM6fo2XYJVpoRQ",
@@ -26,7 +28,6 @@ const firebaseConfig = {
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
-
 const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({
@@ -34,9 +35,7 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth(firebaseApp);
-
 export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
-
 export const db = getFirestore();
 
 export const createCustomUserFromAuth = async (userAuth, additionalInfo = {}) => {
@@ -55,7 +54,7 @@ export const createCustomUserFromAuth = async (userAuth, additionalInfo = {}) =>
         ...additionalInfo
       });
     } catch (error) {
-      console.log("Error: " + error.message);
+      toast.error("Error: " + error.message);
     }
   }
   
@@ -71,3 +70,8 @@ export const signinUserWithGoogleEmailandPassword = async (email, password) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 }
+
+export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangeedListener = async (callback) => 
+  await onAuthStateChanged(auth, callback);

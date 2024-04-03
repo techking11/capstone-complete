@@ -7,6 +7,7 @@ import FormInput from "../form-input/form-input.component";
 
 import "./signup.styles.scss";
 import Button from "../button/button.component";
+import toast from "react-hot-toast";
 
 const fields = {
     displayName: "",
@@ -29,26 +30,28 @@ const SignUp = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        if (password != confirmPassword) {
-            alert("Password does not match !");
-        }
-
+        
         try {
-            const { user } = await createUserWithGoogleEmailandPassword(
-                email,
-                password
-            );
-            await createCustomUserFromAuth(
-                user, {
-                displayName
-            }
-            );
-            resetFormFields();
+            if (password === confirmPassword) {
+                const { user } = await createUserWithGoogleEmailandPassword( email, password);
+                await createCustomUserFromAuth( user, { displayName });
+                resetFormFields();
+                toast.success('Successfully signed up !');
+            } else toast.error('Password not match !');
+            
         } catch (error) {
-            if (error.code == "auth/email-already-in-use")
-                alert("Cannot create user, email already in use");
-            else console.log("Error: " + error.message);
+            switch (error.code) {
+                case "auth/weak-password":
+                    toast.error("Password should be more than 6 characters !");
+                    break;
+                case "auth/email-already-in-use":
+                    toast.error("Cannot create a user, email already in use !");
+                    break;
+                default:
+                    toast.error("Error: " + error.message + " !");
+                    break;
+            }
+
         }
     };
     return (
@@ -63,26 +66,26 @@ const SignUp = () => {
                     name="displayName"
                     value={displayName}
                 />
-                <FormInput 
-                    label={"Email"} 
-                    type="email" required 
-                    onChange={handleChange} 
-                    name="email" 
-                    value={email} 
+                <FormInput
+                    label={"Email"}
+                    type="email" required
+                    onChange={handleChange}
+                    name="email"
+                    value={email}
                 />
-                <FormInput 
-                    label={"Password"} 
-                    type="password" required 
-                    onChange={handleChange} 
-                    name="password" 
-                    value={password} 
+                <FormInput
+                    label={"Password"}
+                    type="password" required
+                    onChange={handleChange}
+                    name="password"
+                    value={password}
                 />
-                <FormInput 
-                    label={"Confirm Password"} 
-                    type="password" required 
-                    onChange={handleChange} 
-                    name="confirmPassword" 
-                    value={confirmPassword} 
+                <FormInput
+                    label={"Confirm Password"}
+                    type="password" required
+                    onChange={handleChange}
+                    name="confirmPassword"
+                    value={confirmPassword}
                 />
                 <Button type="submit">Sign up</Button>
             </form>

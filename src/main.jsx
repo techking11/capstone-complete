@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.scss';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
-import { UserProvider } from './context/user.context.jsx';
+import MainProvider from './provider/main.provider.jsx';
 
 const app = document.getElementById('root');
 const root = ReactDOM.createRoot(app);
@@ -11,9 +11,9 @@ const root = ReactDOM.createRoot(app);
 root.render(
   <StrictMode>
     <BrowserRouter>
-      <UserProvider>
+      <MainProvider>
         <App />
-      </UserProvider>
+      </MainProvider>
     </BrowserRouter>
   </StrictMode>,
 )
